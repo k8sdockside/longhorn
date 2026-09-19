@@ -1,0 +1,257 @@
+{
+    "$schema": "https://raw.githubusercontent.com/k8sdockside/k8sdockside/main/docs/plugin.schema.json",
+    "id": "longhorn",
+    "name": "Longhorn",
+    "version": "1.0.0",
+    "minAppVersion": "0.1.1",
+    "tagline": "distributed block storage: volumes, replicas and the disks under them",
+    "icon": "drive",
+    "logo": "logo.svg",
+    "category": "storage",
+    "docs": "https://longhorn.io/docs/",
+    "author": "K8s Dockside",
+    "authorUrl": "https://github.com/k8sdockside",
+    "links": [
+        { "label": "longhorn.io", "url": "https://longhorn.io" },
+        { "label": "Documentation", "url": "https://longhorn.io/docs/" },
+        { "label": "Troubleshooting", "url": "https://longhorn.io/kb/" },
+        { "label": "GitHub", "url": "https://github.com/longhorn/longhorn" },
+        { "label": "Plugin source", "url": "https://github.com/k8sdockside/longhorn" }
+    ],
+    "description": "Longhorn turns the disks of your nodes into replicated block storage: every volume is a handful of replicas spread across nodes, with one engine in front of them.\n\nThe Dashboard answers the question you actually open Longhorn for — is anything degraded, is anything rebuilding, and is the cluster running out of room — as three rings and one storage bar. The Volume map draws every volume as a card coloured by its robustness, with a pill per replica in the mode the engine reports it (RW, WO, ERR) and a live bar for anything rebuilding. Nodes & disks shows each node's disks with what is scheduled, reserved and used on them, and Data protection shows the backup target, the age of every volume's last backup, and the recurring jobs meant to keep it fresh.\n\nPersistentVolumeClaims, Nodes and Longhorn Volumes also get a panel of their own in the detail view. Changes — disabling scheduling on a node, asking for a snapshot — are always shown to you before they are made.",
+
+    "requires": [
+        { "kind": "crd:volumes.longhorn.io", "label": "Volumes" },
+        { "kind": "crd:nodes.longhorn.io", "label": "Longhorn nodes" },
+        { "kind": "crd:replicas.longhorn.io", "label": "Replicas" },
+        { "kind": "crd:engines.longhorn.io", "label": "Engines" },
+        { "kind": "crd:settings.longhorn.io", "label": "Settings", "optional": true },
+        { "kind": "crd:snapshots.longhorn.io", "label": "Snapshots", "optional": true },
+        { "kind": "crd:backuptargets.longhorn.io", "label": "Backup targets", "optional": true },
+        { "kind": "crd:backupvolumes.longhorn.io", "label": "Backup volumes", "optional": true },
+        { "kind": "crd:backups.longhorn.io", "label": "Backups", "optional": true },
+        { "kind": "crd:recurringjobs.longhorn.io", "label": "Recurring jobs", "optional": true },
+        { "kind": "crd:backingimages.longhorn.io", "label": "Backing images", "optional": true },
+        { "kind": "crd:engineimages.longhorn.io", "label": "Engine images", "optional": true },
+        { "kind": "crd:instancemanagers.longhorn.io", "label": "Instance managers", "optional": true },
+        { "kind": "crd:sharemanagers.longhorn.io", "label": "Share managers", "optional": true },
+        { "kind": "crd:volumeattachments.longhorn.io", "label": "Volume attachments", "optional": true },
+        { "kind": "crd:systembackups.longhorn.io", "label": "System backups", "optional": true },
+        { "kind": "crd:systemrestores.longhorn.io", "label": "System restores", "optional": true },
+        { "kind": "crd:orphans.longhorn.io", "label": "Orphans", "optional": true },
+        { "kind": "crd:supportbundles.longhorn.io", "label": "Support bundles", "optional": true }
+    ],
+
+    "overview": { "entry": "overview.html" },
+
+    "views": [
+        {
+            "id": "volume-map",
+            "label": "Volume map",
+            "icon": "layers",
+            "type": "custom",
+            "entry": "volumes.html",
+            "focus": { "kind": "crd:volumes.longhorn.io" }
+        },
+        { "id": "node-map", "label": "Nodes & disks", "icon": "server", "type": "custom", "entry": "nodes.html" },
+        { "id": "protection", "label": "Data protection", "icon": "shield", "type": "custom", "entry": "backups.html" },
+
+        { "id": "volumes", "label": "Volumes", "icon": "drive", "kind": "crd:volumes.longhorn.io" },
+        { "id": "replicas", "label": "Replicas", "icon": "copies", "kind": "crd:replicas.longhorn.io" },
+        { "id": "engines", "label": "Engines", "icon": "chip", "kind": "crd:engines.longhorn.io" },
+        { "id": "lh-nodes", "label": "Longhorn nodes", "icon": "server", "kind": "crd:nodes.longhorn.io" },
+        { "id": "snapshots", "label": "Snapshots", "icon": "history", "kind": "crd:snapshots.longhorn.io" },
+        { "id": "backup-targets", "label": "Backup targets", "icon": "globe", "kind": "crd:backuptargets.longhorn.io" },
+        { "id": "backup-volumes", "label": "Backup volumes", "icon": "database", "kind": "crd:backupvolumes.longhorn.io" },
+        { "id": "backups", "label": "Backups", "icon": "save", "kind": "crd:backups.longhorn.io" },
+        { "id": "recurring-jobs", "label": "Recurring jobs", "icon": "repeat", "kind": "crd:recurringjobs.longhorn.io" },
+        { "id": "backing-images", "label": "Backing images", "icon": "file", "kind": "crd:backingimages.longhorn.io" },
+        { "id": "engine-images", "label": "Engine images", "icon": "box", "kind": "crd:engineimages.longhorn.io" },
+        { "id": "instance-managers", "label": "Instance managers", "icon": "terminal", "kind": "crd:instancemanagers.longhorn.io" },
+        { "id": "share-managers", "label": "Share managers", "icon": "share", "kind": "crd:sharemanagers.longhorn.io" },
+        { "id": "attachments", "label": "Volume attachments", "icon": "link", "kind": "crd:volumeattachments.longhorn.io" },
+        { "id": "system-backups", "label": "System backups", "icon": "restore", "kind": "crd:systembackups.longhorn.io" },
+        { "id": "system-restores", "label": "System restores", "icon": "undo", "kind": "crd:systemrestores.longhorn.io" },
+        { "id": "orphans", "label": "Orphans", "icon": "alert", "kind": "crd:orphans.longhorn.io" },
+        { "id": "support-bundles", "label": "Support bundles", "icon": "download", "kind": "crd:supportbundles.longhorn.io" },
+        { "id": "settings", "label": "Settings", "icon": "sliders", "kind": "crd:settings.longhorn.io" },
+
+        { "id": "storage-classes", "label": "Storage classes", "icon": "grant", "kind": "storageclasses" },
+        { "id": "managers", "label": "Managers", "icon": "rocket", "kind": "pods", "selector": "app=longhorn-manager" },
+        { "id": "engine-pods", "label": "Instance manager pods", "icon": "chip", "kind": "pods", "selector": "longhorn.io/component=instance-manager" },
+        { "id": "csi", "label": "CSI", "icon": "gateway", "kind": "pods", "selector": "app in (csi-attacher,csi-provisioner,csi-resizer,csi-snapshotter,longhorn-csi-plugin)" },
+        { "id": "ui-pods", "label": "Longhorn UI", "icon": "monitor", "kind": "pods", "selector": "app=longhorn-ui" }
+    ],
+
+    "cards": [
+        {
+            "label": "Volumes",
+            "kind": "crd:volumes.longhorn.io",
+            "groupBy": "status.robustness",
+            "tones": { "healthy": "ok", "degraded": "warn", "faulted": "error", "unknown": "warn" }
+        },
+        {
+            "label": "Attachment",
+            "kind": "crd:volumes.longhorn.io",
+            "groupBy": "status.state",
+            "tones": {
+                "attached": "ok",
+                "detached": "info",
+                "attaching": "warn",
+                "detaching": "warn",
+                "creating": "warn",
+                "deleting": "warn"
+            }
+        },
+        {
+            "label": "Nodes",
+            "kind": "crd:nodes.longhorn.io",
+            "groupBy": "status.conditions[Ready]",
+            "tones": { "True": "ok", "False": "error" }
+        },
+        {
+            "label": "Replicas",
+            "kind": "crd:replicas.longhorn.io",
+            "groupBy": "status.currentState",
+            "tones": { "running": "ok", "stopped": "warn", "starting": "warn", "error": "error" }
+        },
+        {
+            "label": "Backups",
+            "kind": "crd:backups.longhorn.io",
+            "groupBy": "status.state",
+            "tones": { "Completed": "ok", "InProgress": "warn", "Pending": "warn", "New": "info", "Error": "error" }
+        },
+        {
+            "label": "Managers",
+            "kind": "pods",
+            "selector": "app=longhorn-manager",
+            "groupBy": "status.phase",
+            "tones": { "Running": "ok", "Pending": "warn", "Failed": "error", "Unknown": "warn" }
+        }
+    ],
+
+    "charts": [
+        {
+            "id": "storage-used",
+            "label": "Storage used",
+            "attach": "overview",
+            "query": "sum(longhorn_node_storage_usage_bytes)",
+            "unit": "bytes",
+            "description": "What Longhorn's replicas actually occupy on the nodes' disks."
+        },
+        {
+            "id": "storage-scheduled",
+            "label": "Storage scheduled",
+            "attach": "overview",
+            "query": "sum(longhorn_disk_reservation_bytes)",
+            "unit": "bytes",
+            "description": "Space promised to replicas, whether or not it has been written to yet."
+        },
+        {
+            "id": "volume-throughput",
+            "label": "Volume throughput",
+            "attach": "overview",
+            "query": "sum(longhorn_volume_read_throughput) or sum(longhorn_volume_write_throughput)",
+            "unit": "bytes/s",
+            "description": "Read and write throughput across every attached volume."
+        },
+        {
+            "id": "volume-iops",
+            "label": "Volume IOPS",
+            "attach": "overview",
+            "query": "sum(longhorn_volume_read_iops) or sum(longhorn_volume_write_iops)",
+            "unit": "ops/s",
+            "description": "Read and write operations across every attached volume."
+        }
+    ],
+
+    "sections": [
+        {
+            "id": "pvc-volume",
+            "label": "Longhorn volume",
+            "kind": "persistentvolumeclaims",
+            "entry": "pvc.html",
+            "height": 190
+        },
+        { "id": "node-disks", "label": "Longhorn disks", "kind": "nodes", "entry": "node.html", "height": 210 },
+        {
+            "id": "volume-replicas",
+            "label": "Replicas & rebuild",
+            "kind": "crd:volumes.longhorn.io",
+            "entry": "volume.html",
+            "height": 210
+        }
+    ],
+
+    "actions": [
+        {
+            "id": "disable-scheduling",
+            "label": "Disable scheduling",
+            "icon": "pause",
+            "kind": "crd:nodes.longhorn.io",
+            "confirm": "Stop scheduling new replicas onto {name}? Replicas already there keep running.",
+            "done": "{name} takes no new replicas",
+            "request": { "type": "patch", "patch": { "spec": { "allowScheduling": false } } }
+        },
+        {
+            "id": "enable-scheduling",
+            "label": "Enable scheduling",
+            "icon": "play",
+            "kind": "crd:nodes.longhorn.io",
+            "confirm": "Let Longhorn schedule replicas onto {name} again?",
+            "done": "{name} takes replicas again",
+            "request": { "type": "patch", "patch": { "spec": { "allowScheduling": true } } }
+        },
+        {
+            "id": "request-eviction",
+            "label": "Evict replicas",
+            "icon": "exit",
+            "kind": "crd:nodes.longhorn.io",
+            "tone": "danger",
+            "confirm": "Move every replica off {name}? Longhorn rebuilds them elsewhere, which copies their data across the network. The node must have scheduling disabled first.",
+            "done": "{name} is being drained of replicas",
+            "request": { "type": "patch", "patch": { "spec": { "evictionRequested": true } } }
+        },
+        {
+            "id": "cancel-eviction",
+            "label": "Cancel eviction",
+            "icon": "undo",
+            "kind": "crd:nodes.longhorn.io",
+            "confirm": "Stop evicting replicas from {name}? Rebuilds already finished are not undone.",
+            "done": "{name} is no longer being drained",
+            "request": { "type": "patch", "patch": { "spec": { "evictionRequested": false } } }
+        },
+        {
+            "id": "snapshot",
+            "label": "Take a snapshot",
+            "icon": "copy",
+            "kind": "crd:volumes.longhorn.io",
+            "confirm": "Take a snapshot of {name} now?",
+            "done": "a snapshot of {name} was asked for",
+            "when": [{ "field": "status.state", "in": ["attached"] }],
+            "request": {
+                "type": "create",
+                "kind": "crd:snapshots.longhorn.io",
+                "object": {
+                    "apiVersion": "longhorn.io/v1beta2",
+                    "kind": "Snapshot",
+                    "metadata": { "generateName": "{name}-" },
+                    "spec": { "volume": "{name}", "createSnapshot": true }
+                }
+            }
+        }
+    ],
+
+    "ui": {
+        "kinds": [
+            "pods",
+            "nodes",
+            "events",
+            "namespaces",
+            "persistentvolumeclaims",
+            "persistentvolumes",
+            "storageclasses"
+        ],
+        "write": true
+    }
+}
