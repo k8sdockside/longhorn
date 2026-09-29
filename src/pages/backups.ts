@@ -21,7 +21,7 @@ import {
     type RecurringJob,
     type Volume,
 } from '../model/longhorn.js';
-import { freshnessTone, protection, protectionCounts, type Protection } from '../model/protect.js';
+import { freshnessTone, protection, protectionCounts, retention, type Protection } from '../model/protect.js';
 import { byId, el, replace } from '../ui/dom.js';
 import { every, maybeList, since, start } from '../ui/page.js';
 import { block, facts, heading, nothing, pill, ring, stat, type Slice } from '../ui/parts.js';
@@ -146,7 +146,7 @@ function jobsBlock(jobs: RecurringJob[]): HTMLElement {
                 el('td', {}, el('strong', {}, job.metadata.name)),
                 el('td', {}, pill(job.spec?.task ?? 'snapshot', job.spec?.task?.startsWith('backup') ? 'info' : '')),
                 el('td', { class: 'mono' }, job.spec?.cron ?? '—'),
-                el('td', {}, `keeps ${job.spec?.retain ?? 0}`),
+                el('td', {}, retention(job)),
                 el('td', {}, (job.spec?.groups ?? []).join(', ') || 'by label'),
                 el('td', { class: 'faint' }, `${job.status?.executionCount ?? 0} runs`),
             ),

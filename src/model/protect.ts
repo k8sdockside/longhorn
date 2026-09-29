@@ -8,7 +8,7 @@
 // backup target per volume, the name carries a suffix and the volume's name is
 // in the spec or the status instead. Both are read, oldest form last.
 
-import type { BackupVolume, Volume } from './longhorn.js';
+import type { BackupVolume, RecurringJob, Volume } from './longhorn.js';
 import { bytes } from './longhorn.js';
 import type { Tone } from './volume.js';
 
@@ -101,4 +101,22 @@ export function protection(volumes: Volume[], backups: BackupVolume[], now = Dat
 export function protectionCounts(list: Protection[]): { bucket: Freshness; count: number }[] {
     const order: Freshness[] = ['never', 'old', 'stale', 'recent'];
     return order.map((bucket) => ({ bucket, count: list.filter((p) => p.freshness === bucket).length }));
+}
+
+/**
+ * What a recurring job keeps, in words. Up to Longhorn 1.12 a job keeps a
+ * number of snapshots or backups; from 1.13 it may instead keep everything
+ * younger than an age, written as a Go duration ("720h"). Whole days read as
+ * days, since that is how anyone sets a retention.
+ */
+export function retention(job: RecurringJob): string {
+    const spec = job.spec ?? {};
+    if (spec.retentionPolicy !== 'age-based') return `keeps ${spec.retain ?? 0}`;
+    const age = spec.retainAge ?? '';
+    const hours = /^(\d+)h$/.exec(age);
+    if (hours) {
+        const h = Number(hours[1]);
+        if (h > 0 && h % 24 === 0) return `keeps ${h / 24}d`;
+    }
+    return age ? `keeps ${age}` : 'keeps by age';
 }

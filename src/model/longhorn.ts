@@ -263,6 +263,10 @@ export interface RecurringJob extends K8sDockside.KubeObject {
         task?: string;
         cron?: string;
         retain?: number;
+        /** count-based (the default) or age-based, from Longhorn 1.13. */
+        retentionPolicy?: string;
+        /** A Go duration such as "720h", read when retentionPolicy is age-based. */
+        retainAge?: string;
         concurrency?: number;
         labels?: Record<string, string> | null;
     };

@@ -91,6 +91,17 @@
     const order = ["never", "old", "stale", "recent"];
     return order.map((bucket) => ({ bucket, count: list.filter((p) => p.freshness === bucket).length }));
   }
+  function retention(job) {
+    const spec = job.spec ?? {};
+    if (spec.retentionPolicy !== "age-based") return `keeps ${spec.retain ?? 0}`;
+    const age = spec.retainAge ?? "";
+    const hours = /^(\d+)h$/.exec(age);
+    if (hours) {
+      const h = Number(hours[1]);
+      if (h > 0 && h % 24 === 0) return `keeps ${h / 24}d`;
+    }
+    return age ? `keeps ${age}` : "keeps by age";
+  }
 
   // node_modules/@k8sdockside/plugin-sdk/dom.js
   function el(tag, attrs = {}, ...children) {
@@ -405,7 +416,7 @@
         el("td", {}, el("strong", {}, job.metadata.name)),
         el("td", {}, pill(job.spec?.task ?? "snapshot", job.spec?.task?.startsWith("backup") ? "info" : "")),
         el("td", { class: "mono" }, job.spec?.cron ?? "—"),
-        el("td", {}, `keeps ${job.spec?.retain ?? 0}`),
+        el("td", {}, retention(job)),
         el("td", {}, (job.spec?.groups ?? []).join(", ") || "by label"),
         el("td", { class: "faint" }, `${job.status?.executionCount ?? 0} runs`)
       )

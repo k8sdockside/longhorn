@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
-import type { BackupVolume, Volume } from './longhorn.js';
-import { DAY, freshness, protection, protectionCounts, volumeOf } from './protect.js';
+import type { BackupVolume, RecurringJob, Volume } from './longhorn.js';
+import { DAY, freshness, protection, protectionCounts, retention, volumeOf } from './protect.js';
 
 const NOW = Date.parse('2026-09-19T12:00:00Z');
 const ago = (ms: number) => new Date(NOW - ms).toISOString();
@@ -88,5 +88,22 @@ describe('protection', () => {
             { bucket: 'stale', count: 0 },
             { bucket: 'recent', count: 1 },
         ]);
+    });
+});
+
+describe('retention', () => {
+    const job = (spec: RecurringJob['spec']): RecurringJob => ({ metadata: { name: 'daily' }, spec });
+
+    test('a count-based job, or one from before 1.13, keeps a number', () => {
+        expect(retention(job({ retain: 7 }))).toBe('keeps 7');
+        expect(retention(job({ retain: 3, retentionPolicy: 'count-based' }))).toBe('keeps 3');
+        expect(retention(job({}))).toBe('keeps 0');
+    });
+
+    test('an age-based job keeps an age, in days when it is whole days', () => {
+        expect(retention(job({ retentionPolicy: 'age-based', retainAge: '720h' }))).toBe('keeps 30d');
+        expect(retention(job({ retentionPolicy: 'age-based', retainAge: '36h' }))).toBe('keeps 36h');
+        expect(retention(job({ retentionPolicy: 'age-based', retainAge: '90m' }))).toBe('keeps 90m');
+        expect(retention(job({ retentionPolicy: 'age-based' }))).toBe('keeps by age');
     });
 });
